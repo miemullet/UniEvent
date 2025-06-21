@@ -12,15 +12,97 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     
     <style>
-        .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px}.dashboard-card{background-color:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center}.dashboard-card h3{font-size:1.2em;color:#555;margin-bottom:10px}.dashboard-card .count{font-size:2.5em;font-weight:700;color:#4285f4}.dashboard-section{background-color:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08)}.dashboard-section h4{font-size:1.5em;color:#333;margin-bottom:20px;font-weight:600;border-bottom:2px solid #eee;padding-bottom:10px}.item-list{list-style:none;padding:0}.item-list li{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}.item-list li:last-child{border-bottom:none}.item-title{font-weight:600;color:#333}.item-status{display:inline-block;padding:5px 10px;border-radius:20px;font-size:.8em;font-weight:600;color:#000;background-color:#ffd93d}.view-details-btn{background-color:#0f60b6;color:#fff;padding:8px 15px;border-radius:6px;text-decoration:none}
-    </style>
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    margin: auto;
+    margin-bottom: 50px;
+    width: 70%;
+  }
+
+  .dashboard-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+    text-align: center;
+  }
+
+  .dashboard-card h3 {
+    font-size: 1em;
+    margin-bottom: 5px;
+    color: #555;
+  }
+
+  .dashboard-card .count {
+    font-size: 2em;
+    font-weight: 600;
+    color: #4285f4;
+  }
+
+  .dashboard-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+    width: 50%;
+    margin: auto;
+  }
+
+  .dashboard-section h4 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  .item-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .item-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 0.95em;
+    border-bottom: 1px solid #eee;
+  }
+
+  .item-status {
+    font-size: 0.75em;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: #ffd93d;
+    color: #000;
+  }
+
+  .view-details-btn {
+    background-color: #0f60b6;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+
+  .view-details-btn:hover {
+    background-color: #0c4ea2;
+  }
+</style>
+
 </head>
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Staff Dashboard" scope="request"/>
-    <jsp:include page="/includes/staffSidebar.jsp" />
-
+            <jsp:include page="/includes/staffSidebar.jsp" />
+            <jsp:include page="/includes/mainHeader.jsp" />
+                    
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <h3>Total Activities</h3>
@@ -54,7 +136,31 @@
                 </c:choose>
             </ul>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
+                <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+
+
+
+<script>
+   function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const topbar = document.querySelector('.topbar');
+    const subHeader = document.querySelector('.sub-header');
+    const footer = document.querySelector('.page-footer');
+
+    sidebar.classList.toggle("hidden");
+    sidebar.classList.toggle("collapsed");
+
+
+    const isHidden = sidebar.classList.contains("hidden");
+    const margin = isHidden ? "0" : "220px";
+
+    mainContent.style.marginLeft = margin;
+    topbar.style.marginLeft = margin;
+    subHeader.style.marginLeft = margin;
+    footer.style.marginLeft = margin;
+  }</script>
+
 </body>
 </html>

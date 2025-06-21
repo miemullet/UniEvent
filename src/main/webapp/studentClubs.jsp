@@ -103,11 +103,12 @@
         <jsp:include page="/includes/mainHeader.jsp" />
 
         <div class="category-filter">
-            <button class="filter-btn active" onclick="filterClubs('all')">All</button>
+            <!-- FIX: Added 'this' to the onclick function call to pass the button element itself -->
+            <button class="filter-btn active" onclick="filterClubs('all', this)">All</button>
             
-            <%-- This loop now iterates over the unique set of categories from the servlet --%>
             <c:forEach var="category" items="${categories}">
-                <button class="filter-btn" onclick="filterClubs('${category.toLowerCase()}')">${category}</button>
+                <!-- FIX: Added 'this' to the onclick function call here as well -->
+                <button class="filter-btn" onclick="filterClubs('${category.toLowerCase()}', this)">${category}</button>
             </c:forEach>
         </div>
 
@@ -126,14 +127,16 @@
 
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+    
 
     <script>
-        function filterClubs(category) {
+        // FIX: The function now accepts the clicked button element ('clickedButton') as an argument.
+        function filterClubs(category, clickedButton) {
             // Deactivate all buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             
-            // Activate the clicked button
-            document.querySelector(`.filter-btn[onclick="filterClubs('${category}')"]`).classList.add('active');
+            // Activate only the clicked button, which is now a much more reliable method.
+            clickedButton.classList.add('active');
             
             // Show or hide club cards based on the selected category
             document.querySelectorAll('.club-card').forEach(card => {

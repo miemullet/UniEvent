@@ -52,5 +52,28 @@
         </div>
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+                
+
+                <script>
+   function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const topbar = document.querySelector('.topbar');
+    const subHeader = document.querySelector('.sub-header');
+    const footer = document.querySelector('.page-footer');
+
+    sidebar.classList.toggle("hidden");
+    sidebar.classList.toggle("collapsed");
+
+
+    const isHidden = sidebar.classList.contains("hidden");
+    const margin = isHidden ? "0" : "220px";
+
+    mainContent.style.marginLeft = margin;
+    topbar.style.marginLeft = margin;
+    subHeader.style.marginLeft = margin;
+    footer.style.marginLeft = margin;
+  }
+</script>
 </body>
 </html>

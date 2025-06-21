@@ -315,9 +315,10 @@
                 </c:otherwise>
             </c:choose>
         </div>
+        <jsp:include page="studentFooter.jsp" />
     </div>
 
-    <jsp:include page="studentFooter.jsp" />
+    
 
     <script>
         // Adjust content margins when sidebar is collapsed/expanded

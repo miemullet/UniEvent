@@ -23,6 +23,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
+            width: fit-content;
         }
 
         .feedback-header {
@@ -90,9 +91,9 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Feedback" scope="request"/>
     <jsp:include page="/includes/staffSidebar.jsp" />
-
+ <jsp:include page="/includes/mainHeader.jsp" />
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+       
 
         <div class="feedback-grid">
             <c:choose>
@@ -126,7 +127,8 @@
             </c:choose>
         </div>
         
-        <jsp:include page="/includes/mainFooter.jsp" />
+       <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+ 
 </body>
 </html>

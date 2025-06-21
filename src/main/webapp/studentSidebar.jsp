@@ -38,7 +38,7 @@
     .sidebar .left-logo {
         display: block;
         margin: 0 auto 20px auto;
-        width: 150px; /* Adjust size as needed */
+        width: 100px; /* Adjust size as needed */
         transition: width 0.3s ease;
     }
     .sidebar.collapsed .left-logo {

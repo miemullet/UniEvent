@@ -28,9 +28,9 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Account" scope="request"/>
     <jsp:include page="/includes/studentSidebar.jsp" />
-
+    <jsp:include page="/includes/mainHeader.jsp" />
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+        
         <div class="profile-card">
             
             <form action="${pageContext.request.contextPath}/ImageUploadServlet" method="post" enctype="multipart/form-data" id="pfpForm">
@@ -70,8 +70,9 @@
                 </div>
             </form>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
+       <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+    
     <script>
         document.getElementById('imageFile').addEventListener('change', function(event) {
             const [file] = event.target.files;
@@ -85,7 +86,11 @@
             const editButton = document.getElementById('editButton');
             const saveButton = document.getElementById('saveButton');
             const cancelButton = document.getElementById('cancelButton');
-            const formInputs = document.querySelectorAll('#accountForm input:not([type=hidden]):not([readonly])');
+            
+            // **FIX:** The selector now correctly targets all input fields inside the form
+            // that should be made editable, excluding the student ID field.
+            const formInputs = document.querySelectorAll('#accountForm input[name="student_name"], #accountForm input[name="student_email"], #accountForm input[name="student_phone"], #accountForm input[name="student_faculty"], #accountForm input[name="student_course"], #accountForm input[name="student_password"]');
+            
             let originalValues = {};
 
             editButton.addEventListener('click', () => {

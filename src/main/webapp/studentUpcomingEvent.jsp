@@ -44,7 +44,8 @@
                 <p style="color:white;">No upcoming events at the moment. Check back later!</p>
             </c:if>
         </div>
+        <jsp:include page="studentFooter.jsp" />
     </div>
-    <jsp:include page="studentFooter.jsp" />
+    
 </body>
 </html>

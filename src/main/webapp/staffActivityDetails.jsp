@@ -38,9 +38,9 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Activity Details" scope="request"/>
     <jsp:include page="/includes/staffSidebar.jsp" />
-
+   <jsp:include page="/includes/mainHeader.jsp" />
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+     
         <div class="details-container">
             <c:if test="${not empty activity}">
                 <div class="details-group">
@@ -114,5 +114,6 @@
         </div>
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+   
 </body>
 </html>

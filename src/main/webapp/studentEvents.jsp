@@ -18,9 +18,10 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Events" scope="request"/>
     <jsp:include page="/includes/studentSidebar.jsp" />
+    <jsp:include page="/includes/mainHeader.jsp" />
 
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+        
 
         <div class="category-filter">
             <button class="filter-btn active" data-filter-category="all">All Categories</button>
@@ -62,8 +63,10 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
+    <jsp:include page="/includes/mainFooter.jsp" />    
     </div>
+    
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -89,5 +92,27 @@
             });
         });
     </script>
+    
+    <script>
+   function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const topbar = document.querySelector('.topbar');
+    const subHeader = document.querySelector('.sub-header');
+    const footer = document.querySelector('.page-footer');
+
+    sidebar.classList.toggle("hidden");
+    sidebar.classList.toggle("collapsed");
+
+
+    const isHidden = sidebar.classList.contains("hidden");
+    const margin = isHidden ? "0" : "220px";
+
+    mainContent.style.marginLeft = margin;
+    topbar.style.marginLeft = margin;
+    subHeader.style.marginLeft = margin;
+    footer.style.marginLeft = margin;
+  }
+</script>
 </body>
 </html>

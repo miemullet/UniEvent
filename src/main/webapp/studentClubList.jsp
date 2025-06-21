@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="[http://java.sun.com/jsp/jstl/core](http://java.sun.com/jsp/jstl/core)" %>
-<jsp:useBean id="clubs" scope="request" type="java.util.List<model.Club>"/>
-<jsp:useBean id="categoryName" scope="request" type="java.lang.String"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:useBean id="clubs" scope="request" type="java.util.List<model.Club>" />
+<jsp:useBean id="categoryName" scope="request" type="java.lang.String" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,8 +39,9 @@
                 </a>
             </c:forEach>
         </div>
+        <jsp:include page="studentFooter.jsp" />
     </div>
 
-    <jsp:include page="studentFooter.jsp" />
+    
 </body>
 </html>

@@ -66,11 +66,34 @@
                 </c:choose>
             </div>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
+                <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+        
 
     <script>
         document.addEventListener('DOMContentLoaded',function(){const t=document.getElementById("starRating"),e=document.getElementById("ratingInput");let n=0;function d(a=n){Array.from(t.children).forEach(t=>{const e=parseInt(t.dataset.value);t.textContent=e<=a?"★":"☆"})}t.addEventListener("click",a=>{a.target.classList.contains("star")&&(n=parseInt(a.target.dataset.value),e.value=n,d())}),t.addEventListener("mouseover",t=>{t.target.classList.contains("star")&&d(parseInt(t.target.dataset.value))}),t.addEventListener("mouseout",()=>{d()}),d()});
     </script>
+    
+    <script>
+   function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const topbar = document.querySelector('.topbar');
+    const subHeader = document.querySelector('.sub-header');
+    const footer = document.querySelector('.page-footer');
+
+    sidebar.classList.toggle("hidden");
+    sidebar.classList.toggle("collapsed");
+
+
+    const isHidden = sidebar.classList.contains("hidden");
+    const margin = isHidden ? "0" : "220px";
+
+    mainContent.style.marginLeft = margin;
+    topbar.style.marginLeft = margin;
+    subHeader.style.marginLeft = margin;
+    footer.style.marginLeft = margin;
+  }
+</script>
 </body>
 </html>

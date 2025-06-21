@@ -79,9 +79,9 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Reports" scope="request"/>
     <jsp:include page="/includes/staffSidebar.jsp" />
-
+<jsp:include page="/includes/mainHeader.jsp" />
     <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+        
 
         <div class="table-container">
             <table class="reports-table">
@@ -125,8 +125,8 @@
                 </tbody>
             </table>
         </div>
-        
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+     
 </body>
 </html>

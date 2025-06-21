@@ -26,7 +26,7 @@
             padding: 0 30px;
             height: 60px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
             position: fixed;
             top: 0;
@@ -70,28 +70,29 @@
         }
         /* Sub-header styling */
         .sub-header {
-            margin-left: 220px;
-            background-color: #fcd94c;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 30px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 999;
             position: fixed;
-            top: 60px;
-            left: 220px;
-            width: calc(100% - 220px);
+    top: 60px;
+    left: 220px;
+    width: calc(100% - 220px);
+    background-color: #fcd94c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
             transition: margin-left 0.3s ease;
         }
         .sidebar.collapsed ~ .sub-header {
             margin-left: 60px;
+            left: 60px;
+    width: calc(100% - 60px);
         }
         /* Main content area styling */
         .main-content-wrapper {
             margin-left: 220px;
-            padding: 100px 50px 50px;
+            padding: 130px 50px 50px;
             background-color: #f4f6f9;
             flex: 1;
             transition: margin-left 0.3s ease;
@@ -101,21 +102,20 @@
         }
         /* Footer styling - will be replaced by studentFooter.jsp styles */
         .main-footer {
-            margin-left: 220px;
-            text-align: center;
-            padding: 12px;
-            background-color: #e0e0e0;
-            color: #111;
-            font-size: 14px;
-            font-weight: 500;
-            transition: margin-left 0.3s ease;
             position: relative;
-            width: calc(100% - 220px);
-            box-sizing: border-box;
+    text-align: center;
+    padding: 12px;
+    background-color: #e0e0e0;
+    color: #111;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: auto;
+    left: 220px;
+    width: calc(100% - 220px);
         }
         .sidebar.collapsed ~ .main-footer {
-            margin-left: 60px;
-            width: calc(100% - 60px);
+            left: 60px;
+    width: calc(100% - 60px);
         }
 
         /* Student Approval Specific Styles */
