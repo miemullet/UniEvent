@@ -13,7 +13,7 @@ import java.nio.file.Files;
 public class CertificateServlet extends HttpServlet {
     
     // IMPORTANT: This must match the ABSOLUTE path where you save generated certs
-    private static final String CERTIFICATE_DIRECTORY = "C:\\Users\\ayopc\\Documents\\NetBeansProjects\\UniEvent2\\src\\main\\webapp\\uploads\\certificates";
+    private static final String CERTIFICATE_DIRECTORY = "C:\\Users\\Acer\\OneDrive\\Documents\\NetBeansProjects\\UniEvent1\\src\\main\\webapp\\uploads\\images";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

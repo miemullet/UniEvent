@@ -11,19 +11,171 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <style>
-        .dashboard-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:30px}.card{background-color:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center;transition:transform .2s ease-in-out}.card:hover{transform:translateY(-5px)}.card h3{font-size:1.1em;color:#555;margin-bottom:10px;font-weight:600}.card .value{font-size:2.5em;font-weight:700;color:#6b46f2}.dashboard-sections{display:grid;grid-template-columns:2fr 1fr;gap:30px}.section-header{font-size:1.5em;color:#333;margin-bottom:20px;font-weight:600;border-bottom:2px solid #eee;padding-bottom:10px}.list-container{background-color:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08)}.list-container ul{list-style:none;padding:0}.list-container li{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #eee}.list-container li:last-child{border-bottom:none}.item-info{flex-grow:1;margin-left:15px}.item-title{font-weight:600;color:#333}.item-meta{font-size:.9em;color:#777}.item-icon{width:40px;height:40px;background-color:#e6e6fa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;color:#6b46f2;flex-shrink:0}.no-data-message{text-align:center;padding:30px;color:#777;font-style:italic}
-        @media (max-width:992px){.dashboard-sections{grid-template-columns:1fr}}
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 0px auto;       /* ✅ centers the section */
+            max-width: 900px;         /* ✅ limits how wide it can stretch */
+            padding: 0 10px;          /* ✅ adds some horizontal breathing room */
+        }
+
+
+        .main-content1 {
+            margin-left: 220px;
+            padding: 20px 30px 0px 30px;
+            flex-grow: 1;
+            margin-top: 70px; /* Space for topbar and sub-header */
+            transition: margin-left 0.3s; 
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 15px; /* Reduced from 25px */
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+            height: 100px; /* Smaller fixed height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .card .value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #6b46f2;
+        }
+
+        .dashboard-sections {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center; /* ✅ Center the cards horizontally */
+            margin: 10px auto;        /* ✅ Add some margin and center container */
+            max-width: 1000px;        /* ✅ Optional: control overall width */
+        }
+
+        .list-container {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,.06);
+            width: 100%;
+            max-width: 500px;
+            flex: 1 1 45%;
+        }
+
+        .section-header {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .list-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-container li {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95em;
+        }
+
+        .list-container li:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #e6e6fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            color: #6b46f2;
+            flex-shrink: 0;
+        }
+
+        .item-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-meta {
+            font-size: 0.85em;
+            color: #777;
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+            font-style: italic;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-sections {
+                flex-direction: column;
+            }
+        }
+        
+        .content-header1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+        
+        h7 {
+            display: block;
+            font-size: 1.5em;
+            margin-block-start: 0.67em;
+            margin-block-end: 0.67em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-weight: bold;
+            unicode-bidi: isolate;
+        }
+
     </style>
 </head>
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Club Dashboard" scope="request"/>
-    <jsp:include page="/includes/clubSidebar.jsp" />
+    <jsp:include page="/includes/mainHeader.jsp" />
 
-    <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
+    <div class="main-content1">
+        <jsp:include page="/includes/clubSidebar.jsp" />
 
-        <div class="content-header">
-            <h1>Welcome, <c:out value="${sessionScope.studentName}"/>!</h1>
+        <div class="content-header1">
+            <h7>Welcome, <c:out value="${sessionScope.studentName}"/>!</h7>
             <p>Here's a quick overview of your club's activities.</p>
         </div>
 
@@ -51,40 +203,50 @@
                 <h2 class="section-header">Upcoming Events</h2>
                 <ul>
                     <c:choose>
-                        <c:when test="${not empty upcomingEvents}"><c:forEach var="event" items="${upcomingEvents}">
-                            <li>
-                                <div class="item-icon">📅</div>
-                                <div class="item-info">
-                                    <div class="item-title"><c:out value="${event.activity_name}"/></div>
-                                    <div class="item-meta">
-                                        <%-- THIS LINE IS CORRECTED --%>
-                                        <fmt:formatDate value="${event.activity_startdate}" pattern="MMMM dd, yyyy"/> - <c:out value="${event.activity_location}"/>
+                        <c:when test="${not empty upcomingEvents}">
+                            <c:forEach var="event" items="${upcomingEvents}">
+                                <li>
+                                    <div class="item-icon">📅</div>
+                                    <div class="item-info">
+                                        <div class="item-title"><c:out value="${event.activity_name}"/></div>
+                                        <div class="item-meta">
+                                            <fmt:formatDate value="${event.activity_startdate}" pattern="MMMM dd, yyyy"/>
+                                            - <c:out value="${event.activity_location}"/>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                        </c:forEach></c:when>
-                        <c:otherwise><p class="no-data-message">No upcoming events.</p></c:otherwise>
+                                </li>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data-message">No upcoming events.</p>
+                        </c:otherwise>
                     </c:choose>
                 </ul>
             </div>
+
             <div class="list-container">
                 <h2 class="section-header">Newest Members</h2>
                 <ul>
                     <c:choose>
-                        <c:when test="${not empty newMembers}"><c:forEach var="member" items="${newMembers}">
-                           <li>
-                               <div class="item-icon">👤</div>
-                               <div class="item-info">
-                                   <div class="item-title"><c:out value="${member.student_name}"/></div>
-                                   <div class="item-meta"><c:out value="${member.student_no}"/></div>
-                               </div>
-                           </li>
-                        </c:forEach></c:when>
-                        <c:otherwise><p class="no-data-message">No new members.</p></c:otherwise>
+                        <c:when test="${not empty newMembers}">
+                            <c:forEach var="member" items="${newMembers}">
+                                <li>
+                                    <div class="item-icon">👤</div>
+                                    <div class="item-info">
+                                        <div class="item-title"><c:out value="${member.student_name}"/></div>
+                                        <div class="item-meta"><c:out value="${member.student_no}"/></div>
+                                    </div>
+                                </li>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-data-message">No new members.</p>
+                        </c:otherwise>
                     </c:choose>
                 </ul>
             </div>
         </div>
+
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
 </body>

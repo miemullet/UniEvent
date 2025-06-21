@@ -7,13 +7,15 @@
      */
     .page-footer {
         text-align: center;
-        padding: 15px;
+        padding: 8px;
         background-color: #e9ecef; /* A light grey background */
         border-top: 1px solid #dee2e6; /* A subtle top border */
-        font-size: 14px;
+        font-size: 12px;
         color: #6c757d; /* A muted text color */
         font-weight: 500;
         margin-top: auto; /* Pushes the footer to the bottom of the flex container */
+        margin-left: -40px;
+        margin-right: -40px;
     }
 </style>
 

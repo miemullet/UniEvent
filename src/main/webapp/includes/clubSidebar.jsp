@@ -17,6 +17,84 @@
     .sidebar .logout-link a:hover {
         background-color: #f8d7da;
     }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100vh;
+      background: #ffffff;
+      border-right: 1px solid #ccc;
+      padding-top: 20px;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+    .sidebar .logo {
+      width: 120px;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    
+    .sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar.collapsed .logo {
+  width: 40px;
+  margin: 0 auto;
+}
+
+.sidebar.collapsed .nav-links a span,
+.sidebar.collapsed .nav-links a img {
+  display: none;
+}
+
+.sidebar.collapsed .nav-links a {
+  justify-content: center;
+}
+
+
+
+.sidebar .nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.sidebar .nav-links li.active a {
+    background-color: #6c4eff;
+    color: #ffffff;
+    border-radius: 8px;
+    margin: 0 10px;
+}
+
+.sidebar .nav-links img {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+}
+
+    .sidebar.collapsed ~ .page-footer {
+      margin-left: 60px;
+    }
 </style>
 
 <div class="sidebar" id="sidebar">
@@ -32,13 +110,13 @@
         </li>
         <li class="${pageTitle == 'My Activities' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/club/activities">
-                <img src="${pageContext.request.contextPath}/images/event-icon.png" alt="Activities" />
+                <img src="${pageContext.request.contextPath}/images/activity-icon.png" alt="Activities" />
                 <span>Activities</span>
             </a>
         </li>
         <li class="${pageTitle == 'Propose New Activity' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/club/activityProposal">
-                <img src="${pageContext.request.contextPath}/images/proposal-icon.png" alt="Propose Activity" />
+                <img src="${pageContext.request.contextPath}/images/activitypurpose-icon.png" alt="Propose Activity" />
                 <span>Propose Activity</span>
             </a>
         </li>
@@ -62,7 +140,7 @@
         </li>
         <li class="${pageTitle == 'Past Events' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/club/pastEvents">
-                <img src="${pageContext.request.contextPath}/images/history-icon.png" alt="Past Events" />
+                <img src="${pageContext.request.contextPath}/images/pastevent-icon.png" alt="Past Events" />
                 <span>Past Events</span>
             </a>
         </li>
