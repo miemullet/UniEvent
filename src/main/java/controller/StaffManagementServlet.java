@@ -50,6 +50,9 @@ public class StaffManagementServlet extends HttpServlet {
                 case "/activityDetails":
                     showActivityDetails(request, response);
                     break;
+                case "/awardAchievement":
+                    showAwardAchievementForm(request, response);
+                    break;
                 case "/reports":
                     showReports(request, response);
                     break;
@@ -153,6 +156,14 @@ public class StaffManagementServlet extends HttpServlet {
         
         request.setAttribute("activity", activity);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/staffActivityDetails.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void showAwardAchievementForm(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        StudentDAO studentDAO = new StudentDAO();
+        List<Student> studentList = studentDAO.getAllStudents();
+        request.setAttribute("studentList", studentList);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/staffAwardAchievement.jsp");
         dispatcher.forward(request, response);
     }
     

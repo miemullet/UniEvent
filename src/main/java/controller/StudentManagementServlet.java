@@ -7,6 +7,7 @@ import dao.MeritDAO;
 import dao.StudentDAO;
 import dao.FeedbackDAO;
 import dao.CategoryDAO;
+import dao.ClubMembershipDAO; // Updated import
 import model.Achievement;
 import model.Activity;
 import model.Club;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
+import java.util.Set; // Updated import
 import java.util.LinkedHashSet;
 
 @WebServlet("/student/*")
@@ -110,9 +111,17 @@ public class StudentManagementServlet extends HttpServlet {
         }
     }
 
+    /**
+     * [UPDATED] This method now uses the ClubMembershipDAO to determine which clubs
+     * the student has joined and passes this information to the JSP.
+     */
     private void showClubs(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
         ClubDAO clubDAO = new ClubDAO();
+        ClubMembershipDAO membershipDAO = new ClubMembershipDAO(); // New DAO
+        
         List<Club> clubs = clubDAO.getAllClubs();
+        Set<Integer> joinedClubIds = membershipDAO.getJoinedClubIds(studentId); // Get joined clubs
+        
         Set<String> uniqueCategories = new LinkedHashSet<>();
         if (clubs != null) {
             for (Club club : clubs) {
@@ -121,8 +130,11 @@ public class StudentManagementServlet extends HttpServlet {
                 }
             }
         }
+        
         request.setAttribute("clubs", clubs);
         request.setAttribute("categories", uniqueCategories);
+        request.setAttribute("joinedClubIds", joinedClubIds); // Pass the set of joined IDs to the JSP
+        
         RequestDispatcher dispatcher = request.getRequestDispatcher("/studentClubs.jsp");
         dispatcher.forward(request, response);
     }

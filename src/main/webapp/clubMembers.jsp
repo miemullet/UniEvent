@@ -27,7 +27,15 @@
                     <tbody>
                         <c:forEach var="member" items="${members}">
                             <tr>
-                                <td><img src="${pageContext.request.contextPath}/images/user.jpg" class="member-profile-img"><c:out value="${member.student_name}"/></td>
+                                <td>
+                                    <%-- [FIX] Dynamically set the image source and provide a fallback --%>
+                                    <c:set var="imagePath" value="${not empty member.student_image_path ? member.student_image_path : 'images/user.jpg'}" />
+                                    <img src="${pageContext.request.contextPath}/${imagePath}" 
+                                         class="member-profile-img" 
+                                         alt="Profile of ${member.student_name}"
+                                         onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/images/user.jpg';">
+                                    <c:out value="${member.student_name}"/>
+                                </td>
                                 <td><c:out value="${member.student_no}"/></td>
                                 <td><c:out value="${member.student_email}"/></td>
                                 <td><c:out value="${member.student_phonenum}"/></td>

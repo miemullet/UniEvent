@@ -15,7 +15,7 @@ import java.util.List;
 
 public class AchievementDAO {
 
-    private static final String CERTIFICATE_SAVE_DIRECTORY = "C:\\Users\\Acer\\OneDrive\\Documents\\NetBeansProjects\\UniEvent1\\src\\main\\webapp\\uploads\\images";
+    private static final String CERTIFICATE_SAVE_DIRECTORY = "C:\\Users\\ariff\\Documents\\NetBeansProjects\\UniEvent\\src\\main\\webapp\\uploads\\certificates";
 
     private Achievement mapResultSetToAchievement(ResultSet rs) throws SQLException {
         Achievement achievement = new Achievement();

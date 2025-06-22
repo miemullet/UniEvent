@@ -79,7 +79,14 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
-        .view-club-btn {
+        /* [UPDATE] New container for buttons */
+        .club-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: auto;
+        }
+        .view-club-btn, .join-club-btn {
             background-color: #4285f4;
             color: #fff;
             padding: 10px 20px;
@@ -88,11 +95,26 @@
             font-weight: 600;
             text-decoration: none;
             display: block;
-            margin-top: auto;
+            cursor: pointer;
+            transition: background-color .2s ease;
         }
-        .view-club-btn:hover {
+        .view-club-btn:hover, .join-club-btn:hover {
             background-color: #3a75e0;
         }
+        .join-club-btn[disabled] {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .status-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
     </style>
 </head>
 <body class="dashboard-page">
@@ -102,12 +124,23 @@
     <div class="main-content">
         <jsp:include page="/includes/mainHeader.jsp" />
 
+        <!-- [UPDATE] Display status messages from servlet -->
+        <c:if test="${not empty param.status}">
+            <div class="status-message 
+                <c:if test="${param.status == 'join_success'}">success</c:if>
+                <c:if test="${param.status == 'already_member'}">info</c:if>
+                <c:if test="${param.status == 'error'}">error</c:if>">
+                <c:choose>
+                    <c:when test="${param.status == 'join_success'}">Successfully joined the club!</c:when>
+                    <c:when test="${param.status == 'already_member'}">You are already a member of this club.</c:when>
+                    <c:when test="${param.status == 'error'}">An error occurred. Please try again.</c:when>
+                </c:choose>
+            </div>
+        </c:if>
+
         <div class="category-filter">
-            <!-- FIX: Added 'this' to the onclick function call to pass the button element itself -->
             <button class="filter-btn active" onclick="filterClubs('all', this)">All</button>
-            
             <c:forEach var="category" items="${categories}">
-                <!-- FIX: Added 'this' to the onclick function call here as well -->
                 <button class="filter-btn" onclick="filterClubs('${category.toLowerCase()}', this)">${category}</button>
             </c:forEach>
         </div>
@@ -119,7 +152,23 @@
                     <div class="club-card-content">
                         <h3>${club.club_name}</h3>
                         <p>${club.club_desc}</p>
-                        <a href="${pageContext.request.contextPath}/student/clubDetails?club_id=${club.club_id}" class="view-club-btn">View Details</a>
+                        
+                        <!-- [UPDATE] New action buttons container -->
+                        <div class="club-card-actions">
+                            <a href="${pageContext.request.contextPath}/student/clubDetails?club_id=${club.club_id}" class="view-club-btn">View Details</a>
+                            
+                            <c:choose>
+                                <c:when test="${joinedClubIds.contains(club.club_id)}">
+                                    <button class="join-club-btn" disabled>Joined</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <form action="${pageContext.request.contextPath}/JoinClubServlet" method="POST">
+                                        <input type="hidden" name="club_id" value="${club.club_id}">
+                                        <button type="submit" class="join-club-btn">Join Club</button>
+                                    </form>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
                 </div>
             </c:forEach>
@@ -128,20 +177,14 @@
         <jsp:include page="/includes/mainFooter.jsp" />
     </div>
     
-
     <script>
-        // FIX: The function now accepts the clicked button element ('clickedButton') as an argument.
         function filterClubs(category, clickedButton) {
-            // Deactivate all buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            
-            // Activate only the clicked button, which is now a much more reliable method.
             clickedButton.classList.add('active');
             
-            // Show or hide club cards based on the selected category
             document.querySelectorAll('.club-card').forEach(card => {
                 if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'flex'; // Use 'flex' since that's its display type
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }

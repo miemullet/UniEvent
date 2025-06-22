@@ -13,33 +13,77 @@ public class Feedback {
     // Additional fields for display purposes (populated via JOIN in DAOs)
     private String student_name;
     private String activity_name;
-    private int club_id; // Added for filtering feedback by club
+    private int club_id;
+    private String student_image_path; // Field for student's profile picture
 
     // Getters and Setters
-    public String getStudent_name() { return student_name; }
-    public void setStudent_name(String student_name) { this.student_name = student_name; }
+    public String getStudent_image_path() { 
+        return student_image_path; 
+    }
+    public void setStudent_image_path(String student_image_path) { 
+        this.student_image_path = student_image_path; 
+    }
 
-    public String getActivity_name() { return activity_name; }
-    public void setActivity_name(String activity_name) { this.activity_name = activity_name; }
+    public String getStudent_name() { 
+        return student_name; 
+    }
+    public void setStudent_name(String student_name) { 
+        this.student_name = student_name; 
+    }
 
-    public int getClub_id() { return club_id; }
-    public void setClub_id(int club_id) { this.club_id = club_id; }
+    public String getActivity_name() { 
+        return activity_name; 
+    }
+    public void setActivity_name(String activity_name) { 
+        this.activity_name = activity_name; 
+    }
 
-    public int getFeedback_id() { return feedback_id; }
-    public void setFeedback_id(int feedback_id) { this.feedback_id = feedback_id; }
+    public int getClub_id() { 
+        return club_id; 
+    }
+    public void setClub_id(int club_id) { 
+        this.club_id = club_id; 
+    }
 
-    public String getStudent_no() { return student_no; }
-    public void setStudent_no(String student_no) { this.student_no = student_no; }
+    public int getFeedback_id() { 
+        return feedback_id; 
+    }
+    public void setFeedback_id(int feedback_id) { 
+        this.feedback_id = feedback_id; 
+    }
 
-    public int getActivity_id() { return activity_id; }
-    public void setActivity_id(int activity_id) { this.activity_id = activity_id; }
+    public String getStudent_no() { 
+        return student_no; 
+    }
+    public void setStudent_no(String student_no) { 
+        this.student_no = student_no; 
+    }
 
-    public int getFeedback_rating() { return feedback_rating; }
-    public void setFeedback_rating(int feedback_rating) { this.feedback_rating = feedback_rating; }
+    public int getActivity_id() { 
+        return activity_id; 
+    }
+    public void setActivity_id(int activity_id) { 
+        this.activity_id = activity_id; 
+    }
 
-    public String getFeedback_comment() { return feedback_comment; }
-    public void setFeedback_comment(String feedback_comment) { this.feedback_comment = feedback_comment; }
+    public int getFeedback_rating() { 
+        return feedback_rating; 
+    }
+    public void setFeedback_rating(int feedback_rating) { 
+        this.feedback_rating = feedback_rating; 
+    }
 
-    public Timestamp getFeedback_date() { return feedback_date; }
-    public void setFeedback_date(Timestamp feedback_date) { this.feedback_date = feedback_date; }
+    public String getFeedback_comment() { 
+        return feedback_comment; 
+    }
+    public void setFeedback_comment(String feedback_comment) { 
+        this.feedback_comment = feedback_comment; 
+    }
+
+    public Timestamp getFeedback_date() { 
+        return feedback_date; 
+    }
+    public void setFeedback_date(Timestamp feedback_date) { 
+        this.feedback_date = feedback_date; 
+    }
 }

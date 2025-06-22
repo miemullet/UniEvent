@@ -95,7 +95,11 @@
                             <div class="feedback-card">
                                 <div class="feedback-header">
                                     <div class="feedback-profile">
-                                        <img src="${pageContext.request.contextPath}/images/user.jpg" alt="Profile">
+                                        <%-- Dynamically set the image source for each student --%>
+                                        <c:set var="imagePath" value="${not empty feedback.student_image_path ? feedback.student_image_path : 'images/user.jpg'}" />
+                                        <img src="${pageContext.request.contextPath}/${imagePath}" 
+                                             alt="Profile of ${feedback.student_name}"
+                                             onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/images/user.jpg';">
                                         <div>
                                             <div class="feedback-name"><c:out value="${feedback.student_name}"/></div>
                                             <div class="feedback-date"><fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM, yyyy"/></div>

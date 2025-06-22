@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <style>
-        /* [NEW] Styles to beautify the feedback display */
         .feedback-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Responsive grid */
@@ -91,10 +90,9 @@
 <body class="dashboard-page">
     <c:set var="pageTitle" value="Feedback" scope="request"/>
     <jsp:include page="/includes/staffSidebar.jsp" />
- <jsp:include page="/includes/mainHeader.jsp" />
-    <div class="main-content">
-       
+    <jsp:include page="/includes/mainHeader.jsp" />
 
+    <div class="main-content">
         <div class="feedback-grid">
             <c:choose>
                 <c:when test="${not empty allFeedback}">
@@ -102,7 +100,11 @@
                         <div class="feedback-card">
                             <div class="feedback-header">
                                 <div class="feedback-profile">
-                                    <img src="${pageContext.request.contextPath}/images/user.jpg" alt="User profile picture">
+                                    <%-- [FIX] Dynamically set the image source for each student --%>
+                                    <c:set var="imagePath" value="${not empty feedback.student_image_path ? feedback.student_image_path : 'images/user.jpg'}" />
+                                    <img src="${pageContext.request.contextPath}/${imagePath}" 
+                                         alt="Profile of ${feedback.student_name}"
+                                         onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/images/user.jpg';">
                                     <div>
                                         <div class="feedback-name"><c:out value="${feedback.student_name}"/></div>
                                         <div class="feedback-date"><fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM, yyyy"/></div>

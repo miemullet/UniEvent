@@ -37,6 +37,25 @@ public class StudentDAO {
     }
     
     /**
+     * [NEW] Retrieves a list of all active students, ordered by name.
+     * This is used by staff to populate a dropdown for awarding achievements.
+     * @return A list of all active Student objects.
+     * @throws SQLException if a database error occurs.
+     */
+    public List<Student> getAllStudents() throws SQLException {
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM student WHERE student_status = 'ACTIVE' ORDER BY student_name ASC";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                students.add(mapResultSetToStudent(rs));
+            }
+        }
+        return students;
+    }
+    
+    /**
      * Retrieves statistics on how many students from each course are registered for a specific activity.
      * @param activityId The ID of the activity.
      * @return A list of CourseStatistic objects.
@@ -170,7 +189,7 @@ public class StudentDAO {
     }
 
     /**
-     * Gets a list of the most recent members of a specific club.
+     * Gets a list of the most recent members of a specific club based on their join date.
      * @param clubId The ID of the club.
      * @param limit The maximum number of new members to retrieve.
      * @return A list of Student objects.
@@ -179,14 +198,9 @@ public class StudentDAO {
     public List<Student> getNewMembersForClub(int clubId, int limit) throws SQLException {
         List<Student> members = new ArrayList<>();
         String sql = "SELECT s.* FROM student s " +
-                     "JOIN ( " +
-                     "    SELECT r.student_no, MAX(r.registration_date) AS latest_registration " +
-                     "    FROM registration r " +
-                     "    JOIN activity a ON r.activity_id = a.activity_id " +
-                     "    WHERE a.club_id = ? " +
-                     "    GROUP BY r.student_no " +
-                     ") AS latest_regs ON s.student_no = latest_regs.student_no " +
-                     "ORDER BY latest_regs.latest_registration DESC LIMIT ?";
+                     "JOIN club_membership cm ON s.student_no = cm.student_no " +
+                     "WHERE cm.club_id = ? " +
+                     "ORDER BY cm.join_date DESC LIMIT ?";
                      
          try (Connection conn = DBConnection.getConnection(); 
               PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -249,9 +263,8 @@ public class StudentDAO {
     public List<Student> getClubMembers(int clubId) throws SQLException {
         List<Student> members = new ArrayList<>();
         String sql = "SELECT DISTINCT s.* FROM student s " +
-                     "JOIN registration r ON s.student_no = r.student_no " +
-                     "JOIN activity a ON r.activity_id = a.activity_id " +
-                     "WHERE a.club_id = ? ORDER BY s.student_name ASC";
+                     "JOIN club_membership cm ON s.student_no = cm.student_no " +
+                     "WHERE cm.club_id = ? ORDER BY s.student_name ASC";
         try (Connection conn = DBConnection.getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, clubId);

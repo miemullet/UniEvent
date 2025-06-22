@@ -50,12 +50,18 @@ public class ClubDAO {
         return clubs;
     }
     
+    /**
+     * [UPDATED] Retrieves all clubs a specific student has joined by querying
+     * the dedicated club_membership table.
+     * @param studentId The ID of the student.
+     * @return A list of Club objects.
+     * @throws SQLException if a database error occurs.
+     */
     public List<Club> getJoinedClubs(String studentId) throws SQLException {
         List<Club> clubs = new ArrayList<>();
-        String sql = "SELECT DISTINCT c.* FROM club c " +
-                     "JOIN activity a ON c.club_id = a.club_id " +
-                     "JOIN registration r ON a.activity_id = r.activity_id " +
-                     "WHERE r.student_no = ? ORDER BY c.club_name ASC";
+        String sql = "SELECT c.* FROM club c " +
+                     "JOIN club_membership cm ON c.club_id = cm.club_id " +
+                     "WHERE cm.student_no = ? ORDER BY c.club_name ASC";
          try (Connection conn = DBConnection.getConnection();
               PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, studentId);

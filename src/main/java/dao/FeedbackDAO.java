@@ -29,21 +29,28 @@ public class FeedbackDAO {
         
         // Joined columns (ensure they are selected in the SQL query)
         try {
-            if (rs.findColumn("student_name") > 0) { // Check if column exists
+            if (rs.findColumn("student_name") > 0) {
                 feedback.setStudent_name(rs.getString("student_name"));
             }
         } catch (SQLException e) { /* Ignore if column not found */ }
 
+        // Map the student_image_path from the result set
         try {
-            if (rs.findColumn("activity_name") > 0) { // Check if column exists
+            if (rs.findColumn("student_image_path") > 0) {
+                feedback.setStudent_image_path(rs.getString("student_image_path"));
+            }
+        } catch (SQLException e) { /* Ignore if column not found */ }
+
+        try {
+            if (rs.findColumn("activity_name") > 0) {
                 feedback.setActivity_name(rs.getString("activity_name"));
             }
         } catch (SQLException e) { /* Ignore if column not found */ }
         
         try {
-            if (rs.findColumn("club_id_from_activity") > 0) { // Check if column exists (alias needed in JOIN)
+            if (rs.findColumn("club_id_from_activity") > 0) {
                 feedback.setClub_id(rs.getInt("club_id_from_activity"));
-            } else if (rs.findColumn("club_id") > 0) { // Fallback if no alias used
+            } else if (rs.findColumn("club_id") > 0) {
                  feedback.setClub_id(rs.getInt("club_id"));
             }
         } catch (SQLException e) { /* Ignore if column not found */ }
@@ -77,6 +84,7 @@ public class FeedbackDAO {
      */
     public List<Feedback> getFeedbackByStudent(String studentNo) throws SQLException {
         List<Feedback> feedbackList = new ArrayList<>();
+        // Note: This query could also be updated to join with student table if profile pics are needed on this view.
         String sql = "SELECT f.*, a.activity_name FROM feedback f " +
                      "JOIN activity a ON f.activity_id = a.activity_id " +
                      "WHERE f.student_no = ? ORDER BY f.feedback_date DESC";
@@ -94,14 +102,14 @@ public class FeedbackDAO {
 
     /**
      * Retrieves all feedback entries for a specific club.
-     * Joins with student and activity tables to get student name and activity name.
+     * Joins with student and activity tables to get student name, activity name, and student image path.
      * @param clubId The ID of the club.
      * @return A list of Feedback objects for the club.
      * @throws SQLException If a database access error occurs.
      */
     public List<Feedback> getFeedbackForClub(int clubId) throws SQLException {
         List<Feedback> feedbackList = new ArrayList<>();
-        String sql = "SELECT f.*, s.student_name, a.activity_name FROM feedback f " +
+        String sql = "SELECT f.*, s.student_name, s.student_image_path, a.activity_name FROM feedback f " +
                      "JOIN student s ON f.student_no = s.student_no " +
                      "JOIN activity a ON f.activity_id = a.activity_id " +
                      "WHERE a.club_id = ? ORDER BY f.feedback_date DESC";
@@ -119,14 +127,13 @@ public class FeedbackDAO {
 
     /**
      * Retrieves all feedback entries in the system.
-     * Joins with student and activity tables to get student name, activity name, and club ID.
-     * The alias `a.club_id AS club_id_from_activity` is crucial for mapping to feedback.club_id.
+     * Joins with student and activity tables to get student name, activity name, student image path, and club ID.
      * @return A list of all Feedback objects.
      * @throws SQLException If a database access error occurs.
      */
     public List<Feedback> getAllFeedbackWithStudentAndActivityDetails() throws SQLException {
         List<Feedback> feedbackList = new ArrayList<>();
-        String sql = "SELECT f.*, s.student_name, a.activity_name, a.club_id AS club_id_from_activity FROM feedback f " +
+        String sql = "SELECT f.*, s.student_name, s.student_image_path, a.activity_name, a.club_id AS club_id_from_activity FROM feedback f " +
                      "JOIN student s ON f.student_no = s.student_no " +
                      "JOIN activity a ON f.activity_id = a.activity_id " +
                      "ORDER BY f.feedback_date DESC";

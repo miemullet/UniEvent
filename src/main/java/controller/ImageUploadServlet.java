@@ -27,7 +27,7 @@ import java.sql.SQLException;
                  maxRequestSize = 1024 * 1024 * 10)   // 10MB
 public class ImageUploadServlet extends HttpServlet {
 
-    private static final String ABSOLUTE_SAVE_PATH = "C:\\Users\\Acer\\OneDrive\\Documents\\NetBeansProjects\\UniEvent1\\src\\main\\webapp\\uploads\\images";
+    private static final String ABSOLUTE_SAVE_PATH = "C:\\Users\\ariff\\Documents\\NetBeansProjects\\UniEvent\\src\\main\\webapp\\uploads\\images";
     private static final String DATABASE_SAVE_DIR = "uploads/images";
 
     @Override

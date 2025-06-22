@@ -54,7 +54,8 @@
                         <div class="feedback-card">
                             <div class="feedback-header">
                                 <div>
-                                    <div class="feedback-name-date">You on <fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM,<y_bin_858>"/></div>
+                                    <%-- [FIX] Corrected the date format pattern from 'yyyyb' to 'yyyy' --%>
+                                    <div class="feedback-name-date">You on <fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM, yyyy"/></div>
                                     <div class="feedback-stars"><c:forEach begin="1" end="${feedback.feedback_rating}">★</c:forEach><c:forEach begin="${feedback.feedback_rating + 1}" end="5">☆</c:forEach></div>
                                 </div>
                                 <div class="feedback-activity-tag">${feedback.activity_name}</div>
