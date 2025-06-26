@@ -41,14 +41,16 @@ public class DashboardControllerServlet extends HttpServlet {
             AchievementDAO achievementDAO = new AchievementDAO();
             StudentDAO studentDAO = new StudentDAO();
             ClubDAO clubDAO = new ClubDAO();
-            
+            MeritDAO meritDAO = new MeritDAO(); // Instantiate MeritDAO
+
             // Fetch existing data
             List<Activity> inProgressEvents = activityDAO.getInProgressEventsByStudent(studentId);
             List<Achievement> achievements = achievementDAO.getAchievementsByStudent(studentId);
             List<Student> topStudents = studentDAO.getTopStudents(3); 
-            Student currentStudent = studentDAO.getStudentById(studentId);
             List<Club> joinedClubs = clubDAO.getJoinedClubs(studentId);
-            int totalMerit = (currentStudent != null) ? currentStudent.getStudent_merit() : 0;
+            
+            // [UPDATED] Calculate the current valid merit score dynamically
+            int totalMerit = meritDAO.getCurrentValidMerit(studentId);
             
             // Fetch top-rated events
             List<Activity> topRatedEvents = activityDAO.getTopRatedActivities(3);
@@ -59,7 +61,7 @@ public class DashboardControllerServlet extends HttpServlet {
             request.setAttribute("inProgressEvents", inProgressEvents);
             request.setAttribute("achievements", achievements);
             request.setAttribute("topStudents", topStudents);
-            request.setAttribute("totalMerit", totalMerit);
+            request.setAttribute("totalMerit", totalMerit); // Pass the correct score
             request.setAttribute("joinedClubs", joinedClubs);
             request.setAttribute("topRatedEvents", topRatedEvents);
 

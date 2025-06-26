@@ -13,7 +13,7 @@
             background-color: #fff;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            overflow: hidden; /* To keep the banner within the rounded corners */
+            overflow: hidden;
         }
         .about-banner {
             width: 100%;

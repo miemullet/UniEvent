@@ -166,4 +166,19 @@ public class AchievementDAO {
             stmt.executeUpdate();
         }
     }
+
+    /**
+     * [NEW] Deletes all achievements that match a specific title.
+     * This is used to remove a semester's Top Merit Award before re-assigning it.
+     * @param title The exact title of the achievements to delete.
+     * @throws SQLException if a database error occurs.
+     */
+    public void deleteAchievementsByTitle(String title) throws SQLException {
+        String sql = "DELETE FROM achievement WHERE title = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, title);
+            stmt.executeUpdate();
+        }
+    }
 }

@@ -111,10 +111,6 @@ public class StudentManagementServlet extends HttpServlet {
         }
     }
 
-    /**
-     * [UPDATED] This method now uses the ClubMembershipDAO to determine which clubs
-     * the student has joined and passes this information to the JSP.
-     */
     private void showClubs(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
         ClubDAO clubDAO = new ClubDAO();
         ClubMembershipDAO membershipDAO = new ClubMembershipDAO(); // New DAO
@@ -166,13 +162,16 @@ public class StudentManagementServlet extends HttpServlet {
     }
 
     private void showMerit(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
-        StudentDAO studentDAO = new StudentDAO();
         MeritDAO meritDAO = new MeritDAO();
-        Student student = studentDAO.getStudentById(studentId);
-        int totalMerit = (student != null) ? student.getStudent_merit() : 0;
+        
+        // [UPDATED] Calculate valid merit instead of getting it from student object
+        int totalMerit = meritDAO.getCurrentValidMerit(studentId);
+        
         List<MeritEntry> meritHistory = meritDAO.getMeritHistoryByStudent(studentId);
+        
         request.setAttribute("totalMerit", totalMerit);
         request.setAttribute("meritHistory", meritHistory);
+        
         RequestDispatcher dispatcher = request.getRequestDispatcher("/studentMerit.jsp");
         dispatcher.forward(request, response);
     }

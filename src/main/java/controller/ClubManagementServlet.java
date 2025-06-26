@@ -8,7 +8,7 @@ import model.Activity;
 import model.Club;
 import model.Feedback;
 import model.Student;
-import model.CourseStatistic; // Import the new model
+import model.CourseStatistic;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -55,7 +55,7 @@ public class ClubManagementServlet extends HttpServlet {
                     showFeedback(request, response, clubId);
                     break;
                 case "/about":
-                    showAbout(request, response, club);
+                    showAbout(request, response);
                     break;
                 case "/pastEvents":
                     showPastEvents(request, response, clubId);
@@ -118,7 +118,8 @@ public class ClubManagementServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
     
-    private void showAbout(HttpServletRequest request, HttpServletResponse response, Club club) throws ServletException, IOException {
+    private void showAbout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // The Club object is already fetched in doGet and set as a request attribute.
         RequestDispatcher dispatcher = request.getRequestDispatcher("/clubAbout.jsp");
         dispatcher.forward(request, response);
     }
@@ -132,11 +133,7 @@ public class ClubManagementServlet extends HttpServlet {
     }
 
     private void showAccount(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-        String organizerId = (String) request.getSession().getAttribute("username");
-        StudentDAO studentDAO = new StudentDAO();
-        Student organizerStudent = studentDAO.getStudentById(organizerId);
-        
-        request.setAttribute("organizerStudent", organizerStudent);
+        // The Club object is already fetched in doGet and set as a request attribute.
         RequestDispatcher dispatcher = request.getRequestDispatcher("/clubAccount.jsp");
         dispatcher.forward(request, response);
     }
@@ -175,6 +172,43 @@ public class ClubManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "POST method is not supported by this servlet.");
+        
+        HttpSession session = request.getSession(false);
+        if (session == null || !"Club Organizer".equals(session.getAttribute("role"))) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp?error=auth");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String redirectStatus = "error";
+
+        if ("updateClub".equals(action)) {
+            try {
+                int clubId = (int) session.getAttribute("clubId");
+                String clubName = request.getParameter("clubName");
+                String clubDesc = request.getParameter("clubDesc");
+                String clubCategory = request.getParameter("clubCategory");
+
+                ClubDAO clubDAO = new ClubDAO();
+                Club clubToUpdate = clubDAO.getClubById(clubId);
+
+                if (clubToUpdate != null) {
+                    clubToUpdate.setClub_name(clubName);
+                    clubToUpdate.setClub_desc(clubDesc);
+                    clubToUpdate.setClub_category(clubCategory);
+
+                    clubDAO.updateClub(clubToUpdate);
+                    redirectStatus = "success";
+                    
+                    // Also update the club name in the session
+                    session.setAttribute("clubName", clubName);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            response.sendRedirect(request.getContextPath() + "/club/account?update=" + redirectStatus);
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action specified.");
+        }
     }
 }
