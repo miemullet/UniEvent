@@ -11,7 +11,7 @@
     <style>
         .event-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:25px;padding-bottom:20px}.event-card{background-color:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s ease}.event-card:hover{transform:translateY(-5px)}.event-card img{width:100%;height:180px;object-fit:cover;border-bottom:1px solid #eee}.event-card-content{padding:20px;flex-grow:1; display:flex; flex-direction:column;}.event-card-content h3{font-size:20px;margin-top:0;margin-bottom:10px;color:#003366}.event-details{font-size:14px;color:#555;margin-bottom:8px}
         .card-actions { margin-top: auto; padding-top: 15px; }
-        .stats-btn { display: block; width: 100%; text-align: center; background-color: #6c757d; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.2s ease; }
+        .stats-btn { display: block; text-align: center; background-color: #6c757d; color: white; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.2s ease; }
         .stats-btn:hover { background-color: #5a6268; }
     </style>
 </head>
@@ -47,7 +47,8 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+                <jsp:include page="/includes/mainFooter.jsp" />
+
 </body>
 </html>

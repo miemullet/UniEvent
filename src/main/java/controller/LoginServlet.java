@@ -25,16 +25,23 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+/**
+ * Handles user authentication for all roles.
+ * Upon successful student login, it triggers background processes to:
+ * 1. Check and grant the "Top Merit Award".
+ * 2. Generate any missing participation or achievement certificates.
+ *
+ * @version 2.0
+ * @author [Your Name/Team]
+ */
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
     
-    private static final String CERTIFICATE_SAVE_DIRECTORY = "C:\\Users\\ariff\\Documents\\NetBeansProjects\\UniEvent\\src\\main\\webapp\\uploads\\certificates";
+    // The relative path for storing certificates within the web application structure.
+    private static final String CERTIFICATE_SAVE_FOLDER = "uploads" + File.separator + "certificates";
+    private static final String AWARD_TITLE = "Top Merit Award";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -59,11 +66,15 @@ public class LoginServlet extends HttpServlet {
 
                     // --- AUTOMATIC PROCESSES ON LOGIN ---
                     try {
-                        checkAndGrantSemesterTopMeritAward();
-                        generateMissingAchievementCertificates(student);
-                        generateMissingParticipationCertificates(student);
+                        // **CRITICAL FIX**: Pass ServletContext to get the real server path for file saving.
+                        String absoluteCertPath = getServletContext().getRealPath(File.separator) + CERTIFICATE_SAVE_FOLDER;
+                        
+                        checkAndGrantTopMeritAward(absoluteCertPath);
+                        generateMissingAchievementCertificates(student, absoluteCertPath);
+                        generateMissingParticipationCertificates(student, absoluteCertPath);
+
                     } catch (Exception e) {
-                        System.err.println("Error during background generation processes for student " + student.getStudent_no() + ": " + e.getMessage());
+                        System.err.println("CRITICAL ERROR during background processes for student " + student.getStudent_no() + ": " + e.getMessage());
                         e.printStackTrace();
                     }
                     // --- END OF BLOCK ---
@@ -84,16 +95,19 @@ public class LoginServlet extends HttpServlet {
                         redirectPath = request.getContextPath() + "/student/dashboard";
                     }
                 } else {
+                    // Check if the login failed because the account is pending or rejected
                     StudentDAO tempStudentDAO = new StudentDAO();
                     Student tempStudent = tempStudentDAO.getStudentById(username);
-                    if (tempStudent != null && "PENDING".equals(tempStudent.getStudent_status())) {
-                         redirectPath = request.getContextPath() + "/login.jsp?error=pendingApproval";
-                    } else if (tempStudent != null && "REJECTED".equals(tempStudent.getStudent_status())) {
-                         redirectPath = request.getContextPath() + "/login.jsp?error=rejectedAccount";
+                    if (tempStudent != null) {
+                        if ("PENDING".equals(tempStudent.getStudent_status())) {
+                             redirectPath = request.getContextPath() + "/login.jsp?error=pendingApproval";
+                        } else if ("REJECTED".equals(tempStudent.getStudent_status())) {
+                             redirectPath = request.getContextPath() + "/login.jsp?error=rejectedAccount";
+                        }
                     }
                 }
             } else if ("Admin/Staff".equals(role)) {
-                 StaffDAO staffDAO = new StaffDAO();
+                StaffDAO staffDAO = new StaffDAO();
                 Staff staff = staffDAO.login(username, password);
                 if (staff != null) {
                     HttpSession session = request.getSession();
@@ -114,107 +128,127 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
-     * [UPDATED] Checks if the semester's Top Merit Award needs to be granted and does so if required.
-     * This logic now runs based on the semester, allowing for a "reset" each semester.
+     * Checks and grants the 'Top Merit Award'. This logic now ensures that if a new student
+     * becomes the top, the award is transferred, and a certificate is generated. It also ensures
+     * that if the current holder is missing a certificate, it gets generated.
+     * * @param absoluteSavePath The absolute file system path to save the certificate.
+     * @throws SQLException If a database error occurs.
      */
-    private void checkAndGrantSemesterTopMeritAward() throws SQLException {
-        Calendar now = Calendar.getInstance();
-        int currentMonth = now.get(Calendar.MONTH);
-        int currentYear = now.get(Calendar.YEAR);
-
-        String previousSemesterName;
-        Timestamp semesterStart, semesterEnd;
-        
-        // Determine the previous semester's date range
-        // Current Semester: March - August
-        if (currentMonth >= Calendar.MARCH && currentMonth <= Calendar.AUGUST) {
-            // Previous semester was Sep (last year) to Feb (this year)
-            Calendar startCal = Calendar.getInstance();
-            startCal.set(currentYear - 1, Calendar.SEPTEMBER, 1, 0, 0, 0);
-            semesterStart = new Timestamp(startCal.getTimeInMillis());
-            
-            Calendar endCal = Calendar.getInstance();
-            endCal.set(currentYear, Calendar.FEBRUARY, endCal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-            semesterEnd = new Timestamp(endCal.getTimeInMillis());
-            
-            previousSemesterName = String.format("September %d - February %d", currentYear - 1, currentYear);
-        }
-        // Current Semester: September - February
-        else {
-            // Previous semester was March to August of the same year
-            Calendar startCal = Calendar.getInstance();
-            startCal.set(currentYear, Calendar.MARCH, 1, 0, 0, 0);
-            semesterStart = new Timestamp(startCal.getTimeInMillis());
-
-            Calendar endCal = Calendar.getInstance();
-            endCal.set(currentYear, Calendar.AUGUST, 31, 23, 59, 59);
-            semesterEnd = new Timestamp(endCal.getTimeInMillis());
-            
-            // Adjust year for display if we're in Jan/Feb
-            int displayYear = (currentMonth < Calendar.MARCH) ? currentYear -1 : currentYear;
-            previousSemesterName = String.format("March %d - August %d", displayYear, displayYear);
-        }
-
+    private void checkAndGrantTopMeritAward(String absoluteSavePath) throws SQLException {
         StudentDAO studentDAO = new StudentDAO();
         AchievementDAO achievementDAO = new AchievementDAO();
         
-        String awardTitle = "Top Merit Award: " + previousSemesterName;
-
-        Student topStudent = studentDAO.getTopMeritStudentForSemester(semesterStart, semesterEnd);
+        Student topStudent = studentDAO.getTopMeritStudent();
 
         if (topStudent != null) {
-             // [NEW] Delete any existing award for this semester to ensure it can be re-assigned
-            achievementDAO.deleteAchievementsByTitle(awardTitle);
+            // Check if the current top student already holds the award
+            Achievement existingAward = achievementDAO.getAchievementByTitle(topStudent.getStudent_no(), AWARD_TITLE);
 
-            // Grant the new award
-            String description = "Awarded for achieving the highest merit score during the " + previousSemesterName + " semester.";
-            Achievement newAchievement = new Achievement();
-            newAchievement.setStudent_no(topStudent.getStudent_no());
-            newAchievement.setTitle(awardTitle);
-            newAchievement.setDescription(description);
-            newAchievement.setActivity_id(0); // This is a system award, not linked to an activity
-            newAchievement.setDate_awarded(new Timestamp(System.currentTimeMillis()));
+            if (existingAward == null) {
+                // A new student is now the top merit holder.
+                // 1. Remove the award from any previous recipient to ensure only one student holds it.
+                achievementDAO.deleteAchievementsByTitle(AWARD_TITLE);
 
-            achievementDAO.addAchievement(newAchievement);
-            System.out.println("Successfully granted '" + awardTitle + "' to student " + topStudent.getStudent_no());
+                // 2. Grant the new award to the current top student.
+                String description = "Awarded for achieving the highest current merit score in the university.";
+                Achievement newAchievement = new Achievement();
+                newAchievement.setStudent_no(topStudent.getStudent_no());
+                newAchievement.setTitle(AWARD_TITLE);
+                newAchievement.setDescription(description);
+                newAchievement.setActivity_id(0); // System-generated award
+                newAchievement.setDate_awarded(new Timestamp(System.currentTimeMillis()));
+
+                // **RELIABILITY FIX**: The addAchievement method now handles certificate generation internally.
+                achievementDAO.addAchievement(newAchievement, absoluteSavePath);
+                System.out.println("Granted '" + AWARD_TITLE + "' to new top student: " + topStudent.getStudent_no());
+
+            } else if (existingAward.getCert_path() == null || existingAward.getCert_path().isEmpty()) {
+                // The current top student has the award record but is missing the certificate.
+                System.out.println("Attempting to regenerate missing certificate for Top Merit Award holder: " + topStudent.getStudent_no());
+                try {
+                    String certFileName = "achievement_" + topStudent.getStudent_no() + "_" + existingAward.getAchievement_id() + ".pdf";
+                    String dbCertPath = CERTIFICATE_SAVE_FOLDER.replace(File.separator, "/") + "/" + certFileName;
+                    String fullFilePath = absoluteSavePath + File.separator + certFileName;
+                    
+                    // Create directories if they don't exist
+                    File saveDir = new File(absoluteSavePath);
+                    if (!saveDir.exists()) saveDir.mkdirs();
+
+                    CertificateGenerator.createAchievementCertificate(topStudent, existingAward, fullFilePath);
+                    achievementDAO.updateCertificatePath(existingAward.getAchievement_id(), dbCertPath);
+                    System.out.println("Successfully regenerated missing certificate for " + AWARD_TITLE);
+                } catch (Exception e) {
+                    System.err.println("Failed to regenerate certificate for achievement ID " + existingAward.getAchievement_id() + ". Error: " + e.getMessage());
+                }
+            }
         }
     }
     
-    private void generateMissingAchievementCertificates(Student student) throws SQLException {
+    /**
+     * Generates certificates for achievements that are recorded in the database but have no certificate file path.
+     * * @param student The student who logged in.
+     * @param absoluteSavePath The absolute file system path to save the certificates.
+     * @throws SQLException If a database error occurs.
+     */
+    private void generateMissingAchievementCertificates(Student student, String absoluteSavePath) throws SQLException {
         AchievementDAO achievementDAO = new AchievementDAO();
         List<Achievement> achievementsToProcess = achievementDAO.getAchievementsWithoutCertificatesForStudent(student.getStudent_no());
+        
         if (achievementsToProcess.isEmpty()) return;
-        File certificateDir = new File(CERTIFICATE_SAVE_DIRECTORY);
+
+        File certificateDir = new File(absoluteSavePath);
         if (!certificateDir.exists()) certificateDir.mkdirs();
+
+        System.out.println("Found " + achievementsToProcess.size() + " missing achievement certificates for student " + student.getStudent_no());
+
         for (Achievement achievement : achievementsToProcess) {
+            // Skip the Top Merit Award as it's handled by its own logic
+            if (AWARD_TITLE.equals(achievement.getTitle())) {
+                continue;
+            }
             try {
                 String certFileName = "achievement_" + student.getStudent_no() + "_" + achievement.getAchievement_id() + ".pdf";
-                String dbCertPath = "uploads/certificates/" + certFileName;
-                String fullFilePath = CERTIFICATE_SAVE_DIRECTORY + File.separator + certFileName;
+                String dbCertPath = CERTIFICATE_SAVE_FOLDER.replace(File.separator, "/") + "/" + certFileName;
+                String fullFilePath = absoluteSavePath + File.separator + certFileName;
+                
                 CertificateGenerator.createAchievementCertificate(student, achievement, fullFilePath);
                 achievementDAO.updateCertificatePath(achievement.getAchievement_id(), dbCertPath);
+                System.out.println("Generated missing certificate for achievement ID: " + achievement.getAchievement_id());
             } catch (Exception e) {
                 System.err.println("Failed to generate certificate for achievement ID " + achievement.getAchievement_id() + ". Error: " + e.getMessage());
             }
         }
     }
 
-    private void generateMissingParticipationCertificates(Student student) throws SQLException {
+    /**
+     * Generates certificates for event participations that are recorded in the database but have no certificate file path.
+     * * @param student The student who logged in.
+     * @param absoluteSavePath The absolute file system path to save the certificates.
+     * @throws SQLException If a database error occurs.
+     */
+    private void generateMissingParticipationCertificates(Student student, String absoluteSavePath) throws SQLException {
         RegistrationDAO registrationDAO = new RegistrationDAO();
         ActivityDAO activityDAO = new ActivityDAO();
         List<Registration> registrationsToProcess = registrationDAO.getRegistrationsMissingCertificates(student.getStudent_no());
+        
         if (registrationsToProcess.isEmpty()) return;
-        File certificateDir = new File(CERTIFICATE_SAVE_DIRECTORY);
+        
+        File certificateDir = new File(absoluteSavePath);
         if (!certificateDir.exists()) certificateDir.mkdirs();
+
+        System.out.println("Found " + registrationsToProcess.size() + " missing participation certificates for student " + student.getStudent_no());
+
         for (Registration registration : registrationsToProcess) {
             try {
                 Activity activity = activityDAO.getActivityDetails(registration.getActivity_id());
                 if (activity != null) {
                     String certFileName = "participation_" + student.getStudent_no() + "_" + activity.getActivity_id() + ".pdf";
-                    String dbCertPath = "uploads/certificates/" + certFileName;
-                    String fullFilePath = CERTIFICATE_SAVE_DIRECTORY + File.separator + certFileName;
+                    String dbCertPath = CERTIFICATE_SAVE_FOLDER.replace(File.separator, "/") + "/" + certFileName;
+                    String fullFilePath = absoluteSavePath + File.separator + certFileName;
+
                     CertificateGenerator.createParticipationCertificate(student, activity, fullFilePath);
                     registrationDAO.updateCertificatePath(registration.getRegistration_id(), dbCertPath);
+                    System.out.println("Generated missing certificate for registration ID: " + registration.getRegistration_id());
                 }
             } catch (Exception e) {
                 System.err.println("Failed to generate certificate for registration ID " + registration.getRegistration_id() + ". Error: " + e.getMessage());

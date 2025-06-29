@@ -11,6 +11,21 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <style>
+        html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content1 {
+    flex: 1;
+}
+
         .dashboard-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -168,15 +183,15 @@
     </style>
 </head>
 <body class="dashboard-page">
+    <div class="page-wrapper">
     <c:set var="pageTitle" value="Club Dashboard" scope="request"/>
     <jsp:include page="/includes/mainHeader.jsp" />
 
     <div class="main-content1">
-        <jsp:include page="/includes/clubSidebar.jsp" />
+            <jsp:include page="/includes/clubSidebar.jsp" />
 
         <div class="content-header1">
             <h7>Welcome, <c:out value="${sessionScope.studentName}"/>!</h7>
-            <p>Here's a quick overview of your club's activities.</p>
         </div>
 
         <div class="dashboard-cards">
@@ -246,8 +261,8 @@
                 </ul>
             </div>
         </div>
-
-        <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+    </div>        <jsp:include page="/includes/mainFooter.jsp" />
+
 </body>
 </html>

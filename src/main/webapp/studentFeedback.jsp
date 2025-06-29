@@ -9,16 +9,156 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <style>
-        .feedback-form-card{background-color:#fff;padding:30px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.1);margin-bottom:30px;max-width:800px;margin-left:auto;margin-right:auto}.feedback-form-card h4{font-size:22px;color:#003366;margin-bottom:20px;text-align:center}.rating{display:flex;gap:5px;font-size:30px;color:#ffd93d;cursor:pointer;justify-content:center;margin-bottom:20px}.star{transition:transform .2s ease}.star:hover{transform:scale(1.1)}.submit-feedback-btn{background-color:#0f60b6;color:#fff;padding:12px 25px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:16px;width:100%}.past-feedback-section h4{font-size:22px;color:#003366;margin-bottom:20px;text-align:center}.feedback-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}.feedback-card{background-color:#fff;border-radius:12px;padding:20px;box-shadow:0 4px 8px rgba(0,0,0,.1)}.feedback-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.feedback-profile{display:flex;align-items:center;gap:10px}.feedback-profile img{width:40px;height:40px;border-radius:50%;object-fit:cover}.feedback-name-date{font-weight:600;font-size:15px;color:#333}.feedback-activity-tag{background-color:#c6c2dd;color:#333;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600}.feedback-stars{color:#ffd93d;margin-top:5px;font-size:18px}.feedback-comment{font-size:14px;line-height:1.5;color:#555}
+        .feedback-form-card,
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .feedback-form-card h4,
+        .past-feedback-section h4 {
+            font-size: 22px;
+            color: #003366;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .rating {
+            display: flex;
+            gap: 5px;
+            font-size: 30px;
+            color: #ffd93d;
+            cursor: pointer;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            transition: transform .2s ease;
+        }
+
+        .star:hover {
+            transform: scale(1.1);
+        }
+
+        .submit-feedback-btn {
+            background-color: #0f60b6;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .past-feedback-section {
+            padding-bottom: 40px;
+        }
+
+        .feedback-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feedback-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .feedback-stars {
+            color: #ffd93d;
+            font-size: 18px;
+        }
+
+        .feedback-comment {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feedback-activity-tag {
+            background-color: #c6c2dd;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .open-modal-btn {
+            background-color: #0f60b6;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="dashboard-page">
-    <c:set var="pageTitle" value="Feedback" scope="request"/>
-    <jsp:include page="/includes/studentSidebar.jsp" />
+<c:set var="pageTitle" value="Feedback" scope="request"/>
+<jsp:include page="/includes/studentSidebar.jsp"/>
 
-    <div class="main-content">
-        <jsp:include page="/includes/mainHeader.jsp" />
-        <div class="feedback-form-card">
+<div class="main-content">
+    <jsp:include page="/includes/mainHeader.jsp"/>
+
+    <!-- Modal Popup Form -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
             <h4>Submit New Feedback</h4>
             <form action="${pageContext.request.contextPath}/FeedbackServlet" method="post">
                 <input type="hidden" name="action" value="submitFeedback">
@@ -34,7 +174,11 @@
                 <div class="form-group">
                     <label>Overall Rating</label>
                     <div class="rating" id="starRating">
-                        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
                     </div>
                     <input type="hidden" name="rating" id="ratingInput" value="0" required>
                 </div>
@@ -45,56 +189,72 @@
                 <button type="submit" class="submit-feedback-btn">Submit Feedback</button>
             </form>
         </div>
+    </div>
 
-        <div class="past-feedback-section">
-            <h4>Your Past Feedback</h4>
-            <div class="feedback-list">
-                <c:choose>
-                    <c:when test="${not empty studentFeedbackList}"><c:forEach var="feedback" items="${studentFeedbackList}">
+    <!-- Past Feedback Section -->
+    <div class="past-feedback-section">
+        <h4>Your Past Feedback</h4>
+        <button class="open-modal-btn" onclick="openModal()">+ Submit New Feedback</button>
+
+        <div class="feedback-list">
+            <c:choose>
+                <c:when test="${not empty studentFeedbackList}">
+                    <c:forEach var="feedback" items="${studentFeedbackList}">
                         <div class="feedback-card">
                             <div class="feedback-header">
                                 <div>
-                                    <%-- [FIX] Corrected the date format pattern from 'yyyyb' to 'yyyy' --%>
-                                    <div class="feedback-name-date">You on <fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM, yyyy"/></div>
-                                    <div class="feedback-stars"><c:forEach begin="1" end="${feedback.feedback_rating}">★</c:forEach><c:forEach begin="${feedback.feedback_rating + 1}" end="5">☆</c:forEach></div>
+                                    <div class="feedback-name-date">
+                                        You on <fmt:formatDate value="${feedback.feedback_date}" pattern="dd MMM, yyyy"/>
+                                    </div>
+                                    <div class="feedback-stars">
+                                        <c:forEach begin="1" end="${feedback.feedback_rating}">★</c:forEach>
+                                        <c:forEach begin="${feedback.feedback_rating + 1}" end="5">☆</c:forEach>
+                                    </div>
                                 </div>
                                 <div class="feedback-activity-tag">${feedback.activity_name}</div>
                             </div>
                             <p class="feedback-comment"><c:out value="${feedback.feedback_comment}"/></p>
                         </div>
-                    </c:forEach></c:when>
-                    <c:otherwise><p>You haven't submitted any feedback yet.</p></c:otherwise>
-                </c:choose>
-            </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <p style="text-align:center;">You haven't submitted any feedback yet.</p>
+                </c:otherwise>
+            </c:choose>
         </div>
-                <jsp:include page="/includes/mainFooter.jsp" />
     </div>
-        
 
-    <script>
-        document.addEventListener('DOMContentLoaded',function(){const t=document.getElementById("starRating"),e=document.getElementById("ratingInput");let n=0;function d(a=n){Array.from(t.children).forEach(t=>{const e=parseInt(t.dataset.value);t.textContent=e<=a?"★":"☆"})}t.addEventListener("click",a=>{a.target.classList.contains("star")&&(n=parseInt(a.target.dataset.value),e.value=n,d())}),t.addEventListener("mouseover",t=>{t.target.classList.contains("star")&&d(parseInt(t.target.dataset.value))}),t.addEventListener("mouseout",()=>{d()}),d()});
-    </script>
-    
-    <script>
-   function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const topbar = document.querySelector('.topbar');
-    const subHeader = document.querySelector('.sub-header');
-    const footer = document.querySelector('.page-footer');
+    <jsp:include page="/includes/mainFooter.jsp"/>
+</div>
 
-    sidebar.classList.toggle("hidden");
-    sidebar.classList.toggle("collapsed");
+<script>
+    const modal = document.getElementById("feedbackModal");
+    const ratingInput = document.getElementById("ratingInput");
+    const stars = document.querySelectorAll("#starRating .star");
 
+    function openModal() {
+        modal.style.display = "flex";
+    }
 
-    const isHidden = sidebar.classList.contains("hidden");
-    const margin = isHidden ? "0" : "220px";
+    function closeModal() {
+        modal.style.display = "none";
+    }
 
-    mainContent.style.marginLeft = margin;
-    topbar.style.marginLeft = margin;
-    subHeader.style.marginLeft = margin;
-    footer.style.marginLeft = margin;
-  }
+    stars.forEach((star, index) => {
+        star.addEventListener("click", () => {
+            ratingInput.value = index + 1;
+            updateStars(index + 1);
+        });
+
+        star.addEventListener("mouseover", () => updateStars(index + 1));
+        star.addEventListener("mouseout", () => updateStars(ratingInput.value));
+    });
+
+    function updateStars(activeCount) {
+        stars.forEach((s, i) => s.textContent = i < activeCount ? '★' : '☆');
+    }
+
+    updateStars(0); // default
 </script>
 </body>
 </html>

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <style>
+        
         .profile-card{background-color:#fff;padding:30px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-width:800px;margin:20px auto}
         .profile-header{display:flex;align-items:center;gap:25px;margin-bottom:30px;border-bottom:1px solid #eee;padding-bottom:20px}
         .profile-avatar-container { position: relative; }

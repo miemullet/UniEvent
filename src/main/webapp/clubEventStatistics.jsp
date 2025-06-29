@@ -62,8 +62,8 @@
             </c:otherwise>
         </c:choose>
 
-        <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+        <jsp:include page="/includes/mainFooter.jsp" />
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

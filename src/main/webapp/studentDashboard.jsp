@@ -10,24 +10,26 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        html, body{
+            height: 100%;
+            margin:0;
+            overflow: hidden;
+        }
         .dashboard-page {
             display: flex;
             min-height: 100vh;
         }
         .main-content {
-            margin-left: 220px;
-            padding: 20px 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex-grow: 1; 
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding:10px 15px;
         }
         .dashboard-hero {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #fff;
-            padding: 20px;
+            padding: 10px;
             border-radius: 16px;
             box-shadow: 0 4px 8px rgba(0,0,0,.05);
         }
@@ -35,17 +37,20 @@
             font-size: 50px;
             font-weight: 700;
             color: #2c3e50;
+            margin: 0px;
         }
         .hero-left h2 {
             font-size: 50px;
             font-weight: 700;
             color: #2c3e50;
+            margin:0px;
         }
         .dashboard-sections {
             display: grid;
             /* This line is changed to create a fixed 3-column grid */
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            margin-top: 20px;
         }
         .card {
             background: #fff;
@@ -53,7 +58,6 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,.05);
             min-height: 140px;
-            display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
@@ -92,8 +96,8 @@
             flex-wrap: wrap;
         }
         .club-avatars img {
-            width: 36px;
-            height: 36px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -163,15 +167,16 @@
             <div class="card">
                 <h3>In-Progress & Upcoming Events</h3>
                 <c:choose>
-                    <c:when test="${not empty inProgressEvents}">
-                        <c:forEach var="activity" items="${inProgressEvents}">
+                    <%-- **FIX**: Changed from inProgressEvents to activeEvents --%>
+                    <c:when test="${not empty activeEvents}">
+                        <c:forEach var="activity" items="${activeEvents}">
                             <div style="margin-bottom:8px;padding:6px;background:#fafafa;border-radius:8px;">
                                 <img src="${pageContext.request.contextPath}/${activity.image_path}" class="event-img" onerror="this.src='${pageContext.request.contextPath}/images/default_event_poster.png'">
                                 <span>${activity.activity_name}</span><span style="float:right;">⏳</span>
                             </div>
                         </c:forEach>
                     </c:when>
-                    <c:otherwise><p>No events currently in progress.</p></c:otherwise>
+                    <c:otherwise><p>No in-progress or upcoming events found.</p></c:otherwise>
                 </c:choose>
             </div>
 

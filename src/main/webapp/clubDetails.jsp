@@ -38,7 +38,8 @@
                 <c:otherwise><p>Club details not found.</p></c:otherwise>
             </c:choose>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
     </div>
+                <jsp:include page="/includes/mainFooter.jsp" />
+
 </body>
 </html>

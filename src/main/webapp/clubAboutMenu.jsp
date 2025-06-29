@@ -64,12 +64,12 @@
             </div>
         </div>
     </div>
-
-    <div class="footer">
-        © Hak Cipta Universiti Teknologi MARA Cawangan Terengganu 2020
-    </div>
 </div>
 
+     <div class="footer">
+        © Hak Cipta Universiti Teknologi MARA Cawangan Terengganu 2020
+    </div>
+    
 <script>
     function toggleSidebar() {
         document.querySelector('.sidebar').classList.toggle('collapsed');

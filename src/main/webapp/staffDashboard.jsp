@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
     
     <style>
+      
+
   .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -98,6 +100,8 @@
 
 </head>
 <body class="dashboard-page">
+    <div class="page-wrapper">
+
     <c:set var="pageTitle" value="Staff Dashboard" scope="request"/>
             <jsp:include page="/includes/staffSidebar.jsp" />
             <jsp:include page="/includes/mainHeader.jsp" />
@@ -136,10 +140,8 @@
                 </c:choose>
             </ul>
         </div>
-                <jsp:include page="/includes/mainFooter.jsp" />
     </div>
-
-
+</div>                <jsp:include page="/includes/mainFooter.jsp" />
 
 <script>
    function toggleSidebar() {

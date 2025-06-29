@@ -250,14 +250,24 @@ public class ActivityDAO {
         return count;
     }
 
-    public List<Activity> getInProgressEventsByStudent(String studentId) throws SQLException {
+    /**
+     * [UPDATED] Retrieves all registered events for a student that are currently
+     * in-progress OR are scheduled for the future.
+     * @param studentId The student's ID.
+     * @return A list of Activity objects.
+     * @throws SQLException If a database access error occurs.
+     */
+    public List<Activity> getRegisteredInProgressAndUpcomingEventsByStudent(String studentId) throws SQLException {
         List<Activity> events = new ArrayList<>();
+        // **FIX**: The WHERE clause now checks for events where the END date is in the future.
+        // This correctly includes both events that have started but not ended (in-progress)
+        // and events that have not yet started (upcoming).
         String sql = "SELECT a.*, c.club_name, cat.category_name FROM activity a " +
                      "JOIN registration r ON a.activity_id = r.activity_id " +
                      "JOIN club c ON a.club_id = c.club_id " +
                      "JOIN category cat ON a.category_id = cat.category_id " +
                      "WHERE r.student_no = ? AND a.activity_status = 'APPROVED' " +
-                     "AND a.activity_startdate <= NOW() AND a.activity_enddate >= NOW() ORDER BY a.activity_enddate ASC";
+                     "AND a.activity_enddate >= NOW() ORDER BY a.activity_startdate ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, studentId);

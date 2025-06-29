@@ -7,7 +7,7 @@ import dao.MeritDAO;
 import dao.StudentDAO;
 import dao.FeedbackDAO;
 import dao.CategoryDAO;
-import dao.ClubMembershipDAO; // Updated import
+import dao.ClubMembershipDAO;
 import model.Achievement;
 import model.Activity;
 import model.Club;
@@ -26,7 +26,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set; // Updated import
+import java.util.Set;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 @WebServlet("/student/*")
@@ -113,10 +114,10 @@ public class StudentManagementServlet extends HttpServlet {
 
     private void showClubs(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
         ClubDAO clubDAO = new ClubDAO();
-        ClubMembershipDAO membershipDAO = new ClubMembershipDAO(); // New DAO
+        ClubMembershipDAO membershipDAO = new ClubMembershipDAO();
         
         List<Club> clubs = clubDAO.getAllClubs();
-        Set<Integer> joinedClubIds = membershipDAO.getJoinedClubIds(studentId); // Get joined clubs
+        Set<Integer> joinedClubIds = membershipDAO.getJoinedClubIds(studentId);
         
         Set<String> uniqueCategories = new LinkedHashSet<>();
         if (clubs != null) {
@@ -129,7 +130,7 @@ public class StudentManagementServlet extends HttpServlet {
         
         request.setAttribute("clubs", clubs);
         request.setAttribute("categories", uniqueCategories);
-        request.setAttribute("joinedClubIds", joinedClubIds); // Pass the set of joined IDs to the JSP
+        request.setAttribute("joinedClubIds", joinedClubIds);
         
         RequestDispatcher dispatcher = request.getRequestDispatcher("/studentClubs.jsp");
         dispatcher.forward(request, response);
@@ -144,9 +145,14 @@ public class StudentManagementServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
+    /**
+     * Handles displaying the events page with pagination.
+     * Fetches all available upcoming events and splits them into pages.
+     */
     private void showEvents(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
         ActivityDAO activityDAO = new ActivityDAO();
         CategoryDAO categoryDAO = new CategoryDAO();
+        
         List<Activity> availableActivities = activityDAO.getApprovedUpcomingEvents(); 
         List<Category> categories = categoryDAO.getAllCategories();
         
@@ -155,7 +161,38 @@ public class StudentManagementServlet extends HttpServlet {
             activity.setRegistered(isRegistered);
         }
 
-        request.setAttribute("availableActivities", availableActivities);
+        // --- PAGINATION LOGIC ---
+        int currentPage = 1;
+        int recordsPerPage = 4; // Display 4 events per page
+        if (request.getParameter("page") != null) {
+            try {
+                currentPage = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                currentPage = 1; // Default to page 1 if param is invalid
+            }
+        }
+
+        int totalRecords = availableActivities.size();
+        int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+
+        // Ensure currentPage is within a valid range
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
+
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, totalRecords);
+
+        List<Activity> paginatedActivities = (totalRecords > 0) ? availableActivities.subList(startIndex, endIndex) : Collections.emptyList();
+
+        request.setAttribute("availableActivities", paginatedActivities);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("currentPage", currentPage);
+        // --- END PAGINATION LOGIC ---
+        
         request.setAttribute("categories", categories);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/studentEvents.jsp");
         dispatcher.forward(request, response);
@@ -163,10 +200,7 @@ public class StudentManagementServlet extends HttpServlet {
 
     private void showMerit(HttpServletRequest request, HttpServletResponse response, String studentId) throws SQLException, ServletException, IOException {
         MeritDAO meritDAO = new MeritDAO();
-        
-        // [UPDATED] Calculate valid merit instead of getting it from student object
         int totalMerit = meritDAO.getCurrentValidMerit(studentId);
-        
         List<MeritEntry> meritHistory = meritDAO.getMeritHistoryByStudent(studentId);
         
         request.setAttribute("totalMerit", totalMerit);
@@ -189,9 +223,7 @@ public class StudentManagementServlet extends HttpServlet {
         ActivityDAO activityDAO = new ActivityDAO();
         
         List<Activity> registeredActivities = activityDAO.getRegisteredActivitiesByStudent(studentId); 
-        
         registeredActivities.removeIf(activity -> !"APPROVED".equals(activity.getActivity_status()));
-
         List<Feedback> studentFeedbackList = feedbackDAO.getFeedbackByStudent(studentId);
 
         request.setAttribute("attendedActivities", registeredActivities);

@@ -22,6 +22,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Controller for the student dashboard.
+ * Gathers all necessary information for display, including upcoming events,
+ * achievements, merit points, and club memberships.
+ *
+ * @version 2.1
+ * @author [Your Name/Team]
+ */
 @WebServlet("/student/dashboard")
 public class DashboardControllerServlet extends HttpServlet {
     @Override
@@ -41,27 +49,25 @@ public class DashboardControllerServlet extends HttpServlet {
             AchievementDAO achievementDAO = new AchievementDAO();
             StudentDAO studentDAO = new StudentDAO();
             ClubDAO clubDAO = new ClubDAO();
-            MeritDAO meritDAO = new MeritDAO(); // Instantiate MeritDAO
+            MeritDAO meritDAO = new MeritDAO();
 
-            // Fetch existing data
-            List<Activity> inProgressEvents = activityDAO.getInProgressEventsByStudent(studentId);
+            // **FIX**: Changed to fetch ALL approved upcoming events, regardless of registration.
+            // This allows students to see events they might want to join.
+            List<Activity> activeEvents = activityDAO.getApprovedUpcomingEvents();
+            
             List<Achievement> achievements = achievementDAO.getAchievementsByStudent(studentId);
             List<Student> topStudents = studentDAO.getTopStudents(3); 
             List<Club> joinedClubs = clubDAO.getJoinedClubs(studentId);
-            
-            // [UPDATED] Calculate the current valid merit score dynamically
             int totalMerit = meritDAO.getCurrentValidMerit(studentId);
-            
-            // Fetch top-rated events
             List<Activity> topRatedEvents = activityDAO.getTopRatedActivities(3);
 
             // Set all attributes for the JSP
             request.setAttribute("studentName", session.getAttribute("studentName"));
             request.setAttribute("studentId", studentId);
-            request.setAttribute("inProgressEvents", inProgressEvents);
+            request.setAttribute("activeEvents", activeEvents);
             request.setAttribute("achievements", achievements);
             request.setAttribute("topStudents", topStudents);
-            request.setAttribute("totalMerit", totalMerit); // Pass the correct score
+            request.setAttribute("totalMerit", totalMerit);
             request.setAttribute("joinedClubs", joinedClubs);
             request.setAttribute("topRatedEvents", topRatedEvents);
 

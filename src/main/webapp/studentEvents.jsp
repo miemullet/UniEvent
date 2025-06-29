@@ -13,6 +13,38 @@
         .category-filter { margin-bottom: 25px; text-align: center; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         .filter-btn { background-color: #e9ecef; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; color: #495057; transition: background-color .2s ease, color .2s ease, box-shadow .2s ease; }
         .filter-btn.active, .filter-btn:hover { background-color: #6b46f2; color: white; box-shadow: 0 4px 8px rgba(107, 70, 242, 0.3); }
+
+        /* [NEW] Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .pagination-container a, .pagination-container span {
+            color: #6b46f2;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .pagination-container a:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination-container .active {
+            background-color: #6b46f2;
+            color: white;
+            border: 1px solid #6b46f2;
+        }
+        .pagination-container .disabled {
+            color: #ccc;
+            pointer-events: none;
+            border-color: #eee;
+        }
+
     </style>
 </head>
 <body class="dashboard-page">
@@ -21,8 +53,6 @@
     <jsp:include page="/includes/mainHeader.jsp" />
 
     <div class="main-content">
-        
-
         <div class="category-filter">
             <button class="filter-btn active" data-filter-category="all">All Categories</button>
             <c:forEach var="category" items="${categories}">
@@ -39,7 +69,6 @@
                             <div class="event-card-content">
                                 <h3>${activity.activity_name}</h3>
                                 <p class="event-details"><strong>Club:</strong> ${activity.club_name}</p>
-                                <%-- FIX: Corrected the invalid date pattern 'yyyyb' to 'yyyy' --%>
                                 <p class="event-details"><strong>Date:</strong> <fmt:formatDate value="${activity.activity_startdate}" pattern="dd MMM, yyyy"/></p>
                                 <p class="event-description">${activity.activity_desc}</p>
                                 <c:choose>
@@ -63,56 +92,56 @@
                 </c:otherwise>
             </c:choose>
         </div>
+
+        <!-- [NEW] Pagination Controls -->
+        <div class="pagination-container">
+            <c:if test="${currentPage > 1}">
+                <a href="?page=${currentPage - 1}">&laquo; Previous</a>
+            </c:if>
+
+            <c:forEach begin="1" end="${totalPages}" var="i">
+                <c:choose>
+                    <c:when test="${currentPage eq i}">
+                        <span class="active">${i}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?page=${i}">${i}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:if test="${currentPage < totalPages}">
+                <a href="?page=${currentPage + 1}">Next &raquo;</a>
+            </c:if>
+        </div>
+
     <jsp:include page="/includes/mainFooter.jsp" />    
     </div>
-    
-    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const filterButtons = document.querySelectorAll('.filter-btn');
-            const eventCards = document.querySelectorAll('.event-card');
 
+            // --- [NEW] Logic to handle filtering with pagination ---
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    const selectedCategory = this.dataset.filterCategory;
-
-                    eventCards.forEach(card => {
-                        const cardCategory = card.dataset.categoryId;
-                        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+                    const categoryId = this.dataset.filterCategory;
+                    // To properly filter with pagination, we must reload the page
+                    // with the category as a URL parameter.
+                    window.location.href = '${pageContext.request.contextPath}/student/events?category=' + categoryId;
                 });
+            });
+
+            // Set the active state for the category filter based on URL param
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeCategory = urlParams.get('category') || 'all';
+            document.querySelector(`.filter-btn[data-filter-category="${activeCategory}"]`).classList.add('active');
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filterCategory !== activeCategory) {
+                    btn.classList.remove('active');
+                }
             });
         });
     </script>
-    
-    <script>
-   function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const topbar = document.querySelector('.topbar');
-    const subHeader = document.querySelector('.sub-header');
-    const footer = document.querySelector('.page-footer');
-
-    sidebar.classList.toggle("hidden");
-    sidebar.classList.toggle("collapsed");
-
-
-    const isHidden = sidebar.classList.contains("hidden");
-    const margin = isHidden ? "0" : "220px";
-
-    mainContent.style.marginLeft = margin;
-    topbar.style.marginLeft = margin;
-    subHeader.style.marginLeft = margin;
-    footer.style.marginLeft = margin;
-  }
-</script>
 </body>
 </html>

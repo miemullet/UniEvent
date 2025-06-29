@@ -46,7 +46,6 @@
                 </c:otherwise>
             </c:choose>
         </div>
-      <jsp:include page="/includes/mainFooter.jsp" />
     </div>
           
           

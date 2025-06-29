@@ -24,7 +24,7 @@
     <div class="main-content">
         <div class="left-panel">
             <div class="logo-container">
-                <img src="${pageContext.request.contextPath}/images/logo.png" alt="UniEvent Logo" class="form-logo">
+                <img src="${pageContext.request.contextPath}/images/logo unievt.png" alt="UniEvent Logo" class="form-logo">
             </div>
             <h2 class="form-title">Welcome back!</h2>
             <p class="form-subtitle">Enter your credentials to access your account</p>

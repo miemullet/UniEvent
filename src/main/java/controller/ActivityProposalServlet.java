@@ -28,7 +28,7 @@ import java.util.Date;
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class ActivityProposalServlet extends HttpServlet {
     
-    private static final String ABSOLUTE_SAVE_PATH = "C:\\Users\\ayopc\\Documents\\NetBeansProjects\\UniEvent2\\src\\main\\webapp\\uploads";
+    private static final String ABSOLUTE_SAVE_PATH = "C:\\Users\\ADMIN\\Documents\\NetBeansProjects\\UniEvent1\\src\\main\\webapp\\uploads";
     private static final String DATABASE_SAVE_DIR = "uploads"; 
 
     @Override

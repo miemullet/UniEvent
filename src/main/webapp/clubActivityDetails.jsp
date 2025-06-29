@@ -73,7 +73,8 @@
                  <%-- <a href="#" class="edit-btn">Edit Details</a> --%>
             </div>
         </div>
-        <jsp:include page="/includes/mainFooter.jsp" />
+        
     </div>
+            <jsp:include page="/includes/mainFooter.jsp" />
 </body>
 </html>
